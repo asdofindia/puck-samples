@@ -20,6 +20,14 @@ export function Client({ path, data }: { path: string; data: Partial<Data> }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [currentData, setCurrentData] = useState(data);
+  const onPublish = async (data) => { 
+    setCurrentData(data);
+    await fetch("/puck/api", {
+      method: "post",
+      body: JSON.stringify({ data, path }),
+    });
+  }
   return (
 
     <div>
@@ -48,17 +56,12 @@ export function Client({ path, data }: { path: string; data: Partial<Data> }) {
             </Button>
           </Toolbar>
         </AppBar>
-        <Render config={config} data={data} />
+        <Render config={config} data={currentData} />
       </Dialog>
       <Puck
         config={config}
         data={data}
-        onPublish={async (data) => {
-          await fetch("/puck/api", {
-            method: "post",
-            body: JSON.stringify({ data, path }),
-          });
-        }}
+        onPublish={onPublish}
       />
     </div>
   );
